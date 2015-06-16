@@ -1,0 +1,179 @@
+Smarter graphs - an introduction to ggplot2 with R
+========================================================
+author: Alice I. Cecile
+date: 2015-06-16
+
+```{r, echo=FALSE}
+    opts_chunk$set( out.width='2200px', out.height='400px', dpi=200)
+
+```
+
+Why should you switch from Excel?
+========================================================
+
+1. Prettier plots
+2. More complicated plots
+3. Generate plots automatically
+4. Faster and easier*
+5. PDF / svg output
+
+Getting started
+========================================================
+
+1. [Install R (programming language)](http://cran.r-project.org/)
+2. [Install RStudio (IDE)](http://www.rstudio.com/products/rstudio/download/)
+3. [Install ggplot2 (library)](https://www.youtube.com/watch?v=u1r5XTqrCTQ)
+
+Loading your data
+========================================================
+
+1. Make a new project
+2. Save your data into that folder
+3. Load your data
+
+```{r}
+    cars <- read.csv("./cars.csv")
+    summary(cars)
+```
+
+Standard plotting library
+========================================================
+
+Easy but boring. It's hard to make more complex plots.
+
+```{r}
+plot(x=cars$dist, y=cars$speed)
+```
+
+Introducing ggplot2
+========================================================
+
+Let's try the same thing with ggplot2.
+
+```{r}
+    library(ggplot2)
+    basic_cars <- ggplot(cars, aes(x=dist, y=speed)) + geom_point()
+    basic_cars
+```
+
+Basic customization
+========================================================
+
+```{r}
+    pretty_cars <- basic_cars +
+        xlab("Distance") + ylab("Speed") + 
+        theme_bw()
+    pretty_cars
+```
+
+Lines of best fit
+========================================================
+
+```{r}
+    pretty_cars +
+        geom_smooth(colour="red") + 
+        stat_smooth(method="lm", colour="blue")
+```
+
+A new data set
+========================================================
+
+```{r}
+    data(iris)
+    iris_plot <- ggplot(iris, aes(x=Sepal.Length, y=Sepal.Width, colour=Species)) + geom_point() + theme_bw()
+    iris_plot
+```
+
+Changing colour palette
+========================================================
+
+There are [all sorts of predifined colours](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf) in R!
+Or you can just use a hex code.
+
+```{r}
+    iris_plot + scale_color_manual (values=c("purple", "darkseagreen3", "#AA0234"))
+```
+
+Other ways to distinguish groups
+========================================================
+
+```{r}
+    iris_plot + geom_point(aes(shape=Species, size=Species))
+```
+
+Line graphs
+========================================================
+
+```{r}
+    nile <- read.csv("./Nile.csv")
+    ggplot(nile, aes(x=Year, y=Nile.Height)) + geom_line() + 
+        geom_hline(y=mean(nile$Nile.Height))
+```
+
+Bar graphs
+========================================================
+
+```{r}
+    data("diamonds")
+    ggplot(diamonds, aes(x=cut)) + geom_bar()
+```
+
+Box plots
+========================================================
+
+```{r}
+    ggplot(diamonds, aes(x=color, y=price)) + geom_boxplot()
+```
+
+Violin plots
+========================================================
+
+```{r}
+    ggplot(diamonds, aes(x=color, y=price)) + geom_violin()
+```
+
+Histograms
+========================================================
+
+```{r}
+    ggplot(diamonds, aes(x=price, fill=cut)) + geom_histogram()
+```
+
+Kernel density plots
+========================================================
+
+```{r}
+    ggplot(diamonds, aes(x=price, fill=cut)) + geom_density(alpha=0.3)
+```
+
+Big data - transparency
+========================================================
+
+```{r}
+    diamonds_points <- ggplot(diamonds, aes(x=carat, y=price)) + geom_point(alpha=0.1) + theme_bw()
+    diamonds_points
+```
+
+Big data - 2D density estimates
+========================================================
+
+```{r}
+library("MASS")
+data(geyser, "MASS")
+
+ggplot(geyser, aes(x = duration, y = waiting)) + geom_point() + geom_density2d()
+```
+
+Faceting - simple
+========================================================
+
+```{r}
+    diamonds_points + facet_wrap(~cut)
+```
+
+Faceting - grids
+========================================================
+
+```{r}
+    diamonds_points + facet_grid(color~cut)
+```
